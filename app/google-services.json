@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "413227373809",
+    "firebase_url": "https://flyfree-933d0.firebaseio.com",
+    "project_id": "flyfree-933d0",
+    "storage_bucket": "flyfree-933d0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413227373809:android:97909b29b2061cd7f88550",
+        "android_client_info": {
+          "package_name": "com.example.freelancefirst"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413227373809-lc3jhqop1rusdnkf59cfbgcg8s8pbv9m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.freelancefirst",
+            "certificate_hash": "8067e8de2e3d930348349d41c981784fbca4b9a3"
+          }
+        },
+        {
+          "client_id": "413227373809-ptmq21c2m1cd7k47cl466ht8llguural.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRz7-k9CkZgkfMVYn2yUTi2ljvRPYtE80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413227373809-a4eh566etaigm1aqvn0v59340ni6sggp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
