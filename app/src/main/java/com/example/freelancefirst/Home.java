@@ -295,10 +295,42 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
         UploadAPI apiService = retrofit.create(UploadAPI.class);
 
         Call<MyResponse> call = apiService.uploadImage(body);
-        call.enqueue(new Callback<MyResponse>() {
-            @Override
-            public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
-                if (response.isSuccessful()){
+
+        try {
+            call.enqueue(new Callback<MyResponse>() {
+                @Override
+                public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                    if (response.isSuccessful()){
+
+                        if (cameraClick){
+                            File file = new File(imagePath);
+                            if (file.exists()){
+                                file.delete();
+                            }
+                            cameraClick=false;
+                        }
+                    }
+
+                    new AlertDialog.Builder(Home.this)
+                            .setTitle("Status")
+                            .setMessage(""+response.body().getClass_()+"\n"+response.body().getConfidence())
+                            .setCancelable(false)
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    uri=null;
+                                    imagePath=null;
+                                    setProgressBar();
+                                    showImage();
+                                    startActivity(new Intent(Home.this, HomePage.class));
+                                    finish();
+                                }
+                            }).show();
+                }
+
+                @Override
+                public void onFailure(Call<MyResponse> call, Throwable t) {
 
                     if (cameraClick){
                         File file = new File(imagePath);
@@ -307,54 +339,32 @@ public class Home extends AppCompatActivity implements View.OnClickListener {
                         }
                         cameraClick=false;
                     }
+
+                    new AlertDialog.Builder(Home.this)
+                            .setTitle("Status")
+                            .setMessage("API not Connect")
+                            .setCancelable(false)
+                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    setProgressBar();
+                                    showImage();
+                                    uri=null;
+                                    imagePath=null;
+                                    startActivity(new Intent(Home.this, HomePage.class));
+                                    finish();
+                                }
+                            }).show();
                 }
+            });
 
-                new AlertDialog.Builder(Home.this)
-                        .setTitle("Status")
-                        .setMessage(""+response.body().getClass_()+"\n"+response.body().getConfidence())
-                        .setCancelable(false)
-                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                uri=null;
-                                imagePath=null;
-                                setProgressBar();
-                                showImage();
-                                startActivity(new Intent(Home.this, HomePage.class));
-                                finish();
-                            }
-                        }).show();
-            }
-
-            @Override
-            public void onFailure(Call<MyResponse> call, Throwable t) {
-
-                if (cameraClick){
-                    File file = new File(imagePath);
-                    if (file.exists()){
-                        file.delete();
-                    }
-                    cameraClick=false;
-                }
-
-                new AlertDialog.Builder(Home.this)
-                        .setTitle("Status")
-                        .setMessage("API not Connect")
-                        .setCancelable(false)
-                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                setProgressBar();
-                                showImage();
-                                uri=null;
-                                imagePath=null;
-                                startActivity(new Intent(Home.this, HomePage.class));
-                                finish();
-                            }
-                        }).show();
-            }
-        });
+        }catch (Exception e){
+            Toast.makeText(this, "Problem With The Server", Toast.LENGTH_SHORT).show();
+            uri=null;
+            imagePath=null;
+            setProgressBar();
+            showImage();
+        }
     }
 }
