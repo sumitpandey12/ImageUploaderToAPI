@@ -4,16 +4,20 @@ package com.example.freelancefirst;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.chaos.view.PinView;
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnSendOtp,btnVerifyOtp;
     SignInButton btnGoogle;
-    TextInputEditText txtPhone;
+    TextInputEditText txtPhone,txtPhoneCode;
     LinearLayout layout1, layout2;
     PinView txtOTP;
 
@@ -48,10 +52,11 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient gsc;
     FirebaseAuth mAuth;
     String verificationId;
-
+    ProgressBar progressBar;
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor myedit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         btnVerifyOtp = findViewById(R.id.btn_verifyOtp);
         layout1 = findViewById(R.id.layout1);
         layout2 = findViewById(R.id.layout2);
+        progressBar = findViewById(R.id.progress_bar_send);
+        txtPhoneCode = findViewById(R.id.txt_phone_code);
 
 
         sharedPreferences = getSharedPreferences("mySharePreferences",MODE_PRIVATE);
@@ -91,10 +98,12 @@ public class MainActivity extends AppCompatActivity {
         btnSendOtp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TextUtils.isEmpty(txtPhone.getText().toString()) && txtPhone.length()!=12){
+
+                if (TextUtils.isEmpty(txtPhone.getText().toString()) && txtPhone.length()!=10){
                     Toast.makeText(MainActivity.this, "Phone not correct", Toast.LENGTH_SHORT).show();
                 }else {
-                    String number = "+"+txtPhone.getText().toString();
+                    progressBar();
+                    String number = txtPhoneCode.getText().toString()+txtPhone.getText().toString();
 
                     PhoneAuthOptions options = PhoneAuthOptions.newBuilder(mAuth)
                             .setPhoneNumber(number)
@@ -106,11 +115,13 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, "OTP Send Successfully", Toast.LENGTH_SHORT).show();
                                     layout1.setVisibility(View.GONE);
                                     layout2.setVisibility(View.VISIBLE);
+                                    progressBar();
                                 }
 
                                 @Override
                                 public void onVerificationFailed(@NonNull FirebaseException e) {
                                     Toast.makeText(MainActivity.this, "Something Went Wrong"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    progressBar();
                                 }
 
                                 @Override
@@ -154,6 +165,17 @@ public class MainActivity extends AppCompatActivity {
     private void signIn() {
         Intent intent = gsc.getSignInIntent();
         startActivityForResult(intent,100);
+    }
+
+
+    private void progressBar(){
+        if (progressBar.getVisibility()!=View.VISIBLE){
+            progressBar.setVisibility(View.VISIBLE);
+            btnSendOtp.setVisibility(View.GONE);
+        }else {
+            btnSendOtp.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override

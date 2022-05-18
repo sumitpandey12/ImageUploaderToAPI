@@ -75,6 +75,8 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
     String imagePath;
     Uri uri;
     public ActionBarDrawerToggle actionBarDrawerToggle;
+    public DrawerLayout drawerLayout;
+    NavigationView navigationView;
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor myedit;
@@ -87,10 +89,47 @@ public class HomePage extends AppCompatActivity implements View.OnClickListener 
 
         btn_capture = findViewById(R.id.btn_img_camera);
         btn_library = findViewById(R.id.btn_img_photo);
+        navigationView = findViewById(R.id.navigation_view);
 
 
         sharedPreferences = getSharedPreferences("mySharePreferences",MODE_PRIVATE);
         myedit = sharedPreferences.edit();
+
+        // drawer layout instance to toggle the menu icon to open
+        // drawer and back button to close drawer
+        drawerLayout = findViewById(R.id.my_drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.nav_open, R.string.nav_close);
+
+        // pass the Open and Close toggle for the drawer layout listener
+        // to toggle the button
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        // to make the Navigation drawer icon always appear on the action bar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.nav_home:
+                        Toast.makeText(HomePage.this, "Already in Home", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.nav_about:
+                        startActivity(new Intent(HomePage.this, About.class));
+                        break;
+                    case R.id.nav_contact:
+                        startActivity(new Intent(HomePage.this,Contact.class));
+                        break;
+                    case R.id.nav_logout:
+                        myedit.putBoolean("Login", false);
+                        myedit.apply();
+                        startActivity(new Intent(HomePage.this, MainActivity.class));
+                        finish();
+                }
+                return true;
+            }
+        });
 
 
         btn_capture.setOnClickListener(this);
